@@ -19,44 +19,19 @@ def main(filename, sheet_name):
     # Initialize the Graph with the number of Vertices
     graph = Graph(int(level_node_number.values.sum()))
 
-    # Set the appropriate value of weight in each edge
-    counter = 0
-    
-    graph.add_edge(counter, 1, weight=int(weights.iloc[counter][0]))
-    graph.add_edge(counter, 2, weight=int(weights.iloc[counter][1]))
-    
-    for i in range(0, 2):
-        counter = counter + 1
+    counter = -1
+    total_nodes = 1
 
-        graph.add_edge(counter, 3, weight=int(weights.iloc[counter][0]))
-        graph.add_edge(counter, 4, weight=int(weights.iloc[counter][1]))
-        graph.add_edge(counter, 5, weight=int(weights.iloc[counter][2]))
+    # for each level, except the last one
+    for k in range(0, level_node_number.size-1):
+        # For each node in the level
+        for i in range(0, int(level_node_number[k])):
+            counter = counter + 1
+            # Add a new node and connect it to the ones in the new level with the appropriate weight 
+            for j in range(0, int(level_node_number[k+1])):
+                graph.add_edge(counter, j+total_nodes, weight=int(weights.iloc[counter][j]))
+        total_nodes = total_nodes + int(level_node_number[k+1])
 
-    for i in range(0, 3):
-        counter = counter + 1
-        graph.add_edge(counter, 6, weight=int(weights.iloc[counter][0]))
-        graph.add_edge(counter, 7, weight=int(weights.iloc[counter][1]))
-        graph.add_edge(counter, 8, weight=int(weights.iloc[counter][2]))
-        graph.add_edge(counter, 9, weight=int(weights.iloc[counter][3]))
-
-    for i in range(0, 4):
-        counter = counter + 1
-
-        graph.add_edge(counter, 10, weight=int(weights.iloc[counter][0]))
-        graph.add_edge(counter, 11, weight=int(weights.iloc[counter][1]))
-        graph.add_edge(counter, 12, weight=int(weights.iloc[counter][2]))
-
-    for i in range(0, 3):
-        counter = counter + 1
-
-        graph.add_edge(counter, 13, weight=int(weights.iloc[counter][0]))
-        graph.add_edge(counter, 14, weight=int(weights.iloc[counter][1]))
-
-    for i in range(0, 2):
-        counter = counter + 1
-
-        graph.add_edge(counter, 15, weight=int(weights.iloc[counter][0]))
-        
     # Initialize the necessary variables to use the Dynamic Programming approach
     count = int(sum(level_node_number))-1
     best_cost = np.full(int(sum(level_node_number)), np.inf)
@@ -65,7 +40,7 @@ def main(filename, sheet_name):
     for i in range(0, num_of_levels):
         # Reverse the number of nodes for each level. Because we will go backwards
         for j in range(0, int(level_node_number[num_of_levels-i-1])):
-            tmp = g.graph.get(count)
+            tmp = graph.graph.get(count)
             if tmp is not None:
                 # Initial value infinity because we need the smallest cost route
                 node_best_cost = np.inf
@@ -94,6 +69,8 @@ def main(filename, sheet_name):
     print("These are the best choices for each node to follow in the graph \n", best_choice)
     print("This is the best route to follow from A to B \n", best_route, "\n and the cost of this route is ", best_cost[0])
 
+def remove_nan(list_with_nan):
+    return list_with_nan[~np.isnan(list_with_nan)]
 
 if __name__ == '__main__':
     main(filename="data.xlsx", sheet_name="Sheet1")
