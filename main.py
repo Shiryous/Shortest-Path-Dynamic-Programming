@@ -1,7 +1,3 @@
-# Uncomment if encounter problems with openpyxl
-# import pip
-# pip.main(["install", "openpyxl"])
-
 import numpy as np
 import pandas as pd
 
@@ -40,7 +36,7 @@ def main(filename, sheet_name):
     for i in range(0, num_of_levels):
         # Reverse the number of nodes for each level. Because we will go backwards
         for j in range(0, int(level_node_number[num_of_levels-i-1])):
-            tmp = graph.graph.get(count)
+            tmp = graph.node_adjaceny_list.get(count)
             if tmp is not None:
                 # Initial value infinity because we need the smallest cost route
                 node_best_cost = np.inf
@@ -68,9 +64,6 @@ def main(filename, sheet_name):
 
     print("These are the best choices for each node to follow in the graph \n", best_choice)
     print("This is the best route to follow from A to B \n", best_route, "\n and the cost of this route is ", best_cost[0])
-
-def remove_nan(list_with_nan):
-    return list_with_nan[~np.isnan(list_with_nan)]
 
 if __name__ == '__main__':
     main(filename="data.xlsx", sheet_name="Sheet1")
